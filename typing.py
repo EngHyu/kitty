@@ -1,80 +1,70 @@
 import re
-
-class constRule:
-    BASE_CODE, CHOSUNG, JUNGSUNG = 44032, 588, 28
-    CHOSUNG_LIST  = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
-    JUNGSUNG_LIST = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ']
-    JONGSUNG_LIST = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
-
-    QWERTY = [
-    "`1234567890-=",
-    "qwertyuiop[]\\",
-    "asdfghjkl;\'\n",
-    "zxcvbnm,./",
-    "~!@#$%^&*()_+",
-    "QWERTYUIOP{}|",
-    "ASDFGHJKL:\"",
-    "ZXCVBNM<>?",
-    " ",
-    ]
-
-    DVORAK = [
-    "`1234567890-=",
-    "\',.pyfgcrl/=\\",
-    "aoeuidhtns-\n",
-    ";qjkxbmwvz",
-    "~!@#$%^&*()_+",
-    "\"<>PYFGCRL?+|",
-    "AOEUIDHTNS_\n",
-    ":QJKXBMWVZ",
-    " ",
-    ]
-
-    DUBEOLSIK = [
-    "`1234567890-=",
-    "ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔ[]\\",
-    "ㅁㄴㅇㄹㅎㅗㅓㅏㅣ;\'\n",
-    "ㅋㅌㅊㅍㅠㅜㅡ,./",
-    "~!@#$%^&*()_+",
-    "ㅃㅉㄸㄲㅆㅛㅕㅑㅒㅖ{}|",
-    "ㅁㄴㅇㄹㅎㅗㅓㅏㅣ:\"",
-    "ㅋㅌㅊㅍㅠㅜㅡ<>?",
-    " ",
-    ]
-
-class input:
+from const import *
+class Spliter:
     key_state = [QWERTY, DUBEOLSIK]
     key_state_index = 0
 
-    SWITCH  = ENGLISH
-
     def __init__(self, text):
-        self.text_o = text
-        text_a = self.makeArray(self.text_o)
-        text_s = self.makeSplit(text_a)
+        text_s = self.makeSplit(text)
 
-    def makeArray(self, text):
-        return list(text)
-
-    def makeSplit(self, array):
+    def makeSplit(self, text):
+        result = list()
+        array  = list(text)
         for character in array:
-            if re.match('[ㄱ-ㅎㅏ-ㅣ가-힣]', character):
-                pass
-        return text
+            character = self.switch([character])
+            if self.key_state_index == HANGUL:
+                character = self.get_hangul(character)
+                print(character)
 
-    def switch(self):
-        pass
+            result.append(character)
+
+        print(result)
+        return result
+
+    def switch(self, character):
+        if re.match('[ㄱ-ㅎㅏ-ㅣ가-힣]', character[-1]):
+            key_state_index = HANGUL
+        elif re.match('[a-zA-Z]', character[-1]):
+            key_state_index = ENGLISH
+        else:
+            return character
+
+        if self.key_state_index == key_state_index:
+            return character
+
+        self.key_state_index += 1
+        self.key_state_index %= len(self.key_state)
+
+        character = ['\b'] + character
+        return character
+
+    def get_hangul(self, character):
+        print("get_hangul:", character)
+        char_code = ord(character[-1]) - BASE_CODE
+        if char_code < 0:
+            return character
+
+        cho_idx = char_code // CHOSUNG
+        jung_idx = int((char_code - (CHOSUNG * cho_idx)) / JUNGSUNG)
+        jong_idx = int((char_code - (CHOSUNG * cho_idx) - (JUNGSUNG * jung_idx)))
+        if jong_idx is 0:
+            return character
+
+        character = CHOSUNG_LIST[cho_idx]
+        character += JUNGSUNG_LIST[jung_idx]
+        character += JONGSUNG_LIST[jong_idx]
+        return character
 
 if __name__ == '__main__':
-    test_keyword = "몽롱"
-    split_keyword_list = list(test_keyword)
+    test = '김동호'
+    spliter = Spliter(test)
 
-
+    '''
     result = list()
     for keyword in split_keyword_list:
         # 한글 여부 check 후 분리
         if re.match('.*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*', keyword) is not None:
-            if SWITCH is ENGLISH:
+            if  SWITCH is ENGLISH:
                 SWITCH = HANGUL
                 result.append('\b')
 
@@ -102,16 +92,16 @@ if __name__ == '__main__':
     for key in result:
         if key == ' ':
             # push space bar
-            print("shift:\tFalse\trows:\t4\tcols:\t0")
+            print('shift:\tFalse\trows:\t4\tcols:\t0')
             continue
 
         if key == '\b':
-            print("switched!")
+            print('switched!')
             key_state_index = (key_state_index + 1) % len(key_state)
 
         for index, line in enumerate(key_state[key_state_index]):
             if key in line:
-                print("shift:", bool(index // 4), "rows:", index % 4, "cols:", line.index(key), sep="\t")
+                print('shift:', bool(index // 4), 'rows:', index % 4, 'cols:', line.index(key), sep='\t')
 
                 if index >= 4:
                     pass
@@ -125,3 +115,4 @@ if __name__ == '__main__':
     # hold    command (mac) || ctrl (window)
     # push    enter
     # release command (mac) || ctrl (window)
+    '''
