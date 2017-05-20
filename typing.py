@@ -1,13 +1,18 @@
 import re
 from const import *
+from arduino_wifi_shield import *
 class Spliter:
     key_state_array = [QWERTY, DUBEOLSIK]
     key_state_index = 0
-    key_state = QWERTY
+    key_state = key_state_array[key_state_index]
 
     def __init__(self, text):
-        text_s = self.text_process(text)
-        self.type_process(text_s)
+        self.arduino = Arduino()
+        with open('./layout.json') as keyboard_layout:
+            self.layout = json.load(keyboard_layout)
+
+        text = self.text_process(text)
+        self.type_process(text)
 
     def text_process(self, text):
         result = list()
@@ -66,62 +71,36 @@ class Spliter:
 
     def to_default_key_state(self, result):
         if self.key_state_index == HANGUL:
-            result += '\0'
+            self.key_state_index = ENGLISH
+            result += '\x00'
 
         return result
 
     def type_process(self, text):
-        print(text, self.key_state)
-        print(end='\n\"\"\"\n')
         for key in text:
-            if key == '\0':
+            if key == '\x00':
                 self.set_switch()
-                # self.arduino.switch()
-                print(end="~")
+                self.arduino.switch()
                 continue
 
             if key == ' ':
-                # self.arduino.push_space_bar()
-                print(end="!")
+                self.arduino.type_space_bar()
                 continue
 
-            for index, line in enumerate(self.key_state):
-                if key in line:
-                    # self.arduino.push_key(self.key_state_index, index)
-                    print(key, end="")
-                    break
-        print(end='\n\"\"\"\n\n')
+            for idx_line, line in enumerate(self.key_state):
+                idx_key = line.find(key)
+                if idx_key == -1:
+                    continue
 
+                print(key)
+                if idx_line >= 6:
+                    self.arduino.type(self.arduino.shift, self.layout[idx_line % 6][idx_key])
+                else:
+                    self.arduino.type(self.layout[idx_line % 6][idx_key])
+                break
+
+        self.arduino.upload()
 
 if __name__ == '__main__':
-    test = '''
-김동ㅎgㅎ
-dfsdf
-sdfsdfsdf'''
+    test = '''this is called test 큐ㅋㅠ'''
     spliter = Spliter(test)
-
-    '''
-    for key in result:
-        if key == ' ':
-            # push space bar
-            print('shift:\tFalse\trows:\t4\tcols:\t0')
-            continue
-
-        if key == '\b':
-            print('switched!')
-            key_state_index = (key_state_index + 1) % len(key_state)
-
-        for index, line in enumerate(key_state[key_state_index]):
-            if key in line:
-                print('shift:', bool(index // 4), 'rows:', index % 4, 'cols:', line.index(key), sep='\t')
-
-                if index >= 4:
-                    pass
-                    # hold shift
-                # push row and col
-
-                if index >= 4:
-                    pass
-                    # release shift
-                break
-    '''

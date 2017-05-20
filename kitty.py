@@ -3,18 +3,19 @@ from cv2 import *
 import numpy as np
 class Keyboard:
     def __init__(self, src, dst):
-        self.img_o = imread(src)
-
-        img_o = self.img_o.copy()
-        img_m = self.detectMarker(img_o)
-        img_r = self.detectRect(img_m)
+        img_o = imread(src)
+        img_o = self.detectMarker(img_o)
+        img_o = self.detectRect(img_o)
         #self.show(img_m)
-        #self.show(img_r)
-        imwrite(dst, img_r)
+        #self.show(img_o)
+        imwrite(dst, img_o)
+
+
 
     def detectMarker(self, img):
         img, corners, ids = self.processMarker(img)
-        img = self.drawMarker(img, corners, ids)
+        #img = self.drawMarker(img, corners, ids)
+        img = self.resizeMarker(img, corners, ids)
         return img
 
     def processMarker(self, img):
@@ -26,7 +27,9 @@ class Keyboard:
 
     def drawMarker(self, img, corners, ids):
         img = aruco.drawDetectedMarkers(img, corners, ids)
+        return img
 
+    def resizeMarker(self, img, corners, ids):
         h, w  = img.shape[:2]
         h = round(500 / w * h)
         w = 500
@@ -49,15 +52,15 @@ class Keyboard:
         img = warpPerspective(img, M, (w, h))
         return img
 
+
+
     def detectRect(self, img):
         img = self.get_image(img)
 
         bound_rects = self.get_bound_rects(img)
         rects_1d    = self.get_rects_1d(bound_rects)
         rects_2d    = self.get_rects_2d(rects_1d)
-        space_bar   = self.get_space_bar(rects_1d)
 
-        img = self.drawRect(img, rects_2d)
         self.get_output(rects_2d)
 
         return img
@@ -92,10 +95,8 @@ class Keyboard:
             if area  > 5500: continue
             if area  < 300:  continue
 
-            start  = (x, y)
-            end    = (x + w, y + h)
-            center = (x + w // 2, y + h // 2)
-            rects_1d.append(center + boundRect[2:])
+            center = [x + w // 2, y + h // 2, w, h]
+            rects_1d.append(center)
 
         rects_1d = sorted(rects_1d, key=lambda center: center[1])
         return rects_1d
@@ -103,6 +104,7 @@ class Keyboard:
     def get_rects_2d(self, rects_1d):
         rects_2d = self.get_line(rects_1d)
         rects_2d = self.remove_double(rects_2d)
+        rects_2d = self.scale(rects_2d)
         return rects_2d
 
     def get_line(self, rects_1d):
@@ -119,46 +121,37 @@ class Keyboard:
         return rects_2d
 
     def remove_double(self, rects_2d):
-        for index, line in enumerate(rects_2d):
-            rects_2d[index] = sorted(line, key=lambda center: center[0])
+        for idx_line, line in enumerate(rects_2d):
+            rects_2d[idx_line] = sorted(line, key=lambda center: center[0])
 
         new_rects_2d = rects_2d.copy()
-        for idx, line in enumerate(rects_2d):
+        for idx_line, line in enumerate(rects_2d):
             p_rect = line[0]
             for rect in line[1:]:
                 if rect[0] - p_rect[0] < p_rect[2] // 4:
-                    new_rects_2d[idx].remove(rect)
+                    new_rects_2d[idx_line].remove(rect)
 
                 p_rect = rect
 
         return new_rects_2d
 
-    def get_space_bar(self, rects_1d):
-        min_ratio = 2
-        min_ratio_index = None
+    def scale(self, rects_2d):
+        for line in rects_2d:
+            for rect in line:
+                for idx_num, num in enumerate(rect):
+                    rect[idx_num] = int(num / 500 * 2100)
 
-        for index, rect in enumerate(rects_1d):
-            x, y, w, h = rect
-            ratio = h / w
-
-            if min_ratio <= ratio: continue
-            min_ratio = ratio
-            min_ratio_index = index
-
-        return min_ratio_index
+        return rects_2d
 
     def get_output(self, rects):
-        with open("./layout.txt", "w+") as f:
-            for line in rects:
-                f.write(str(len(line)) + "\n")
-                for rect in line:
-                    f.write(str(rect) + "\n")
-                f.write("\n")
+        import json
+        with open('layout.json', 'w') as output:
+            json.dump(rects, output)
 
     def drawRect(self, img, rects):
         for line in rects:
             for rect in line:
-                circle(img, rect[:2], 5, (255, 255, 255), -1)
+                circle(img, tuple(rect[:2]), 5, (255, 255, 255), -1)
 
         return img
 
