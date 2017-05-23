@@ -92,7 +92,6 @@ class Spliter:
                 if idx_key == -1:
                     continue
 
-                print(key)
                 if idx_line >= 6:
                     self.arduino.type(self.arduino.shift, self.layout[idx_line % 6][idx_key])
                 else:

@@ -1,0 +1,15 @@
+.messages {
+  width: 20%;
+   display: flex;
+   flex-wrap: wrap;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.messages textarea {
+  border: 0px;
+  resize: none;
+  margin-left: 10px;
+  align-self: center;
+  background: transparent;
+}
