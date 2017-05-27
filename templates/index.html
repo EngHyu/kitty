@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <title>Kitty</title>
-    <link rel="stylesheet" href="/static/index.css">
+    <link rel='stylesheet' href='/static/index.css'>
   </head>
 
   <body>
@@ -15,99 +15,121 @@
     <!-- QUESTION:  -->
     <!-- REVIEW:  -->
     <!-- XXX:  -->
-    {% if request.method == "GET" %}
-    <form action="/" method="post" enctype="multipart/form-data">
+    {% if request.method == 'GET' %}
+    <form action='/' method='post' enctype='multipart/form-data'>
       <fieldset>
         <legend>Upload Picture of Kitty staying on keyboard</legend>
-        <input type="file" accept="image/*" name="kitty on keyboard" required>
-        <button type="submit" name="button">전송</button>
+        <input type='file' accept='image/*' name='kitty on keyboard' required>
+        <button type='submit' name='button'>전송</button>
       </fieldset>
     </form>
 
     {% else %}
-    <script type="text/javascript">
+    <img src={{ image_src }} alt=''>
+    <br>
 
+    <div id='keyboard'>
+
+    </div>
+
+    <script type='text/javascript'>
+    for (var i=0; i<[1,2,3].length; i++) {
+      var node = document.createTextNode(i);
+
+      var para = document.createElement('button');
+      para.className += 'key normal-key'
+      para.appendChild(node);
+
+
+      var element = document.getElementById('keyboard');
+      element.appendChild(para);
+
+      console.log(i)
+    }
     </script>
-    <button type="button" name="button" class="key small-key">esc</button>
-    <button type="button" name="button" class="key small-key">F1</button>
-    <button type="button" name="button" class="key small-key">F2</button>
-    <button type="button" name="button" class="key small-key">F3</button>
-    <button type="button" name="button" class="key small-key">F4</button>
-    <button type="button" name="button" class="key small-key">F5</button>
-    <button type="button" name="button" class="key small-key">F6</button>
-    <button type="button" name="button" class="key small-key">F7</button>
-    <button type="button" name="button" class="key small-key">F8</button>
-    <button type="button" name="button" class="key small-key">F9</button>
-    <button type="button" name="button" class="key small-key">F10</button>
-    <button type="button" name="button" class="key small-key">F11</button>
-    <button type="button" name="button" class="key small-key">F12</button>
+
+    <!-- XXX:
+    <button type='button' name='button' class='key small-key'>esc</button>
+    <button type='button' name='button' class='key small-key'>F1</button>
+    <button type='button' name='button' class='key small-key'>F2</button>
+    <button type='button' name='button' class='key small-key'>F3</button>
+    <button type='button' name='button' class='key small-key'>F4</button>
+    <button type='button' name='button' class='key small-key'>F5</button>
+    <button type='button' name='button' class='key small-key'>F6</button>
+    <button type='button' name='button' class='key small-key'>F7</button>
+    <button type='button' name='button' class='key small-key'>F8</button>
+    <button type='button' name='button' class='key small-key'>F9</button>
+    <button type='button' name='button' class='key small-key'>F10</button>
+    <button type='button' name='button' class='key small-key'>F11</button>
+    <button type='button' name='button' class='key small-key'>F12</button>
     <br>
-    <button type="button" name="button" class="key normal-key">`</button>
-    <button type="button" name="button" class="key normal-key">1</button>
-    <button type="button" name="button" class="key normal-key">2</button>
-    <button type="button" name="button" class="key normal-key">3</button>
-    <button type="button" name="button" class="key normal-key">4</button>
-    <button type="button" name="button" class="key normal-key">5</button>
-    <button type="button" name="button" class="key normal-key">6</button>
-    <button type="button" name="button" class="key normal-key">7</button>
-    <button type="button" name="button" class="key normal-key">8</button>
-    <button type="button" name="button" class="key normal-key">9</button>
-    <button type="button" name="button" class="key normal-key">0</button>
-    <button type="button" name="button" class="key normal-key">-</button>
-    <button type="button" name="button" class="key normal-key">=</button>
-    <button type="button" name="button" class="key" id="del-key">del</button>
+    <button type='button' name='button' class='key normal-key'>`</button>
+    <button type='button' name='button' class='key normal-key'>1</button>
+    <button type='button' name='button' class='key normal-key'>2</button>
+    <button type='button' name='button' class='key normal-key'>3</button>
+    <button type='button' name='button' class='key normal-key'>4</button>
+    <button type='button' name='button' class='key normal-key'>5</button>
+    <button type='button' name='button' class='key normal-key'>6</button>
+    <button type='button' name='button' class='key normal-key'>7</button>
+    <button type='button' name='button' class='key normal-key'>8</button>
+    <button type='button' name='button' class='key normal-key'>9</button>
+    <button type='button' name='button' class='key normal-key'>0</button>
+    <button type='button' name='button' class='key normal-key'>-</button>
+    <button type='button' name='button' class='key normal-key'>=</button>
+    <button type='button' name='button' class='key' id='del-key'>del</button>
     <br>
-    <button type="button" name="button" class="key" id="tab-key">tab</button>
-    <button type="button" name="button" class="key normal-key">q</button>
-    <button type="button" name="button" class="key normal-key">w</button>
-    <button type="button" name="button" class="key normal-key">e</button>
-    <button type="button" name="button" class="key normal-key">r</button>
-    <button type="button" name="button" class="key normal-key">t</button>
-    <button type="button" name="button" class="key normal-key">y</button>
-    <button type="button" name="button" class="key normal-key">u</button>
-    <button type="button" name="button" class="key normal-key">i</button>
-    <button type="button" name="button" class="key normal-key">o</button>
-    <button type="button" name="button" class="key normal-key">p</button>
-    <button type="button" name="button" class="key normal-key">[</button>
-    <button type="button" name="button" class="key normal-key">]</button>
-    <button type="button" name="button" class="key normal-key">\</button>
+    <button type='button' name='button' class='key' id='tab-key'>tab</button>
+    <button type='button' name='button' class='key normal-key'>q</button>
+    <button type='button' name='button' class='key normal-key'>w</button>
+    <button type='button' name='button' class='key normal-key'>e</button>
+    <button type='button' name='button' class='key normal-key'>r</button>
+    <button type='button' name='button' class='key normal-key'>t</button>
+    <button type='button' name='button' class='key normal-key'>y</button>
+    <button type='button' name='button' class='key normal-key'>u</button>
+    <button type='button' name='button' class='key normal-key'>i</button>
+    <button type='button' name='button' class='key normal-key'>o</button>
+    <button type='button' name='button' class='key normal-key'>p</button>
+    <button type='button' name='button' class='key normal-key'>[</button>
+    <button type='button' name='button' class='key normal-key'>]</button>
+    <button type='button' name='button' class='key normal-key'>\</button>
     <br>
-    <button type="button" name="button" class="key" id="caps-lock-key">caps</button>
-    <button type="button" name="button" class="key normal-key">a</button>
-    <button type="button" name="button" class="key normal-key">s</button>
-    <button type="button" name="button" class="key normal-key">d</button>
-    <button type="button" name="button" class="key normal-key">f</button>
-    <button type="button" name="button" class="key normal-key">g</button>
-    <button type="button" name="button" class="key normal-key">h</button>
-    <button type="button" name="button" class="key normal-key">j</button>
-    <button type="button" name="button" class="key normal-key">k</button>
-    <button type="button" name="button" class="key normal-key">l</button>
-    <button type="button" name="button" class="key normal-key">;</button>
-    <button type="button" name="button" class="key normal-key">'</button>
-    <button type="button" name="button" class="key" id="enter-key">enter</button>
+    <button type='button' name='button' class='key' id='caps-lock-key'>caps</button>
+    <button type='button' name='button' class='key normal-key'>a</button>
+    <button type='button' name='button' class='key normal-key'>s</button>
+    <button type='button' name='button' class='key normal-key'>d</button>
+    <button type='button' name='button' class='key normal-key'>f</button>
+    <button type='button' name='button' class='key normal-key'>g</button>
+    <button type='button' name='button' class='key normal-key'>h</button>
+    <button type='button' name='button' class='key normal-key'>j</button>
+    <button type='button' name='button' class='key normal-key'>k</button>
+    <button type='button' name='button' class='key normal-key'>l</button>
+    <button type='button' name='button' class='key normal-key'>;</button>
+    <button type='button' name='button' class='key normal-key'>'</button>
+    <button type='button' name='button' class='key' id='enter-key'>enter</button>
     <br>
-    <button type="button" name="button" class="key shift-key">shift</button>
-    <button type="button" name="button" class="key normal-key">z</button>
-    <button type="button" name="button" class="key normal-key">x</button>
-    <button type="button" name="button" class="key normal-key">c</button>
-    <button type="button" name="button" class="key normal-key">v</button>
-    <button type="button" name="button" class="key normal-key">b</button>
-    <button type="button" name="button" class="key normal-key">n</button>
-    <button type="button" name="button" class="key normal-key">m</button>
-    <button type="button" name="button" class="key normal-key">,</button>
-    <button type="button" name="button" class="key normal-key">.</button>
-    <button type="button" name="button" class="key normal-key">/</button>
-    <button type="button" name="button" class="key shift-key">shift</button>
+    <button type='button' name='button' class='key shift-key'>shift</button>
+    <button type='button' name='button' class='key normal-key'>z</button>
+    <button type='button' name='button' class='key normal-key'>x</button>
+    <button type='button' name='button' class='key normal-key'>c</button>
+    <button type='button' name='button' class='key normal-key'>v</button>
+    <button type='button' name='button' class='key normal-key'>b</button>
+    <button type='button' name='button' class='key normal-key'>n</button>
+    <button type='button' name='button' class='key normal-key'>m</button>
+    <button type='button' name='button' class='key normal-key'>,</button>
+    <button type='button' name='button' class='key normal-key'>.</button>
+    <button type='button' name='button' class='key normal-key'>/</button>
+    <button type='button' name='button' class='key shift-key'>shift</button>
     <br>
-    <button type="button" name="button" class="key" id="fn-key">fn</button>
-    <button type="button" name="button" class="key control-key">ctrl</button>
-    <button type="button" name="button" class="key alt-key">alt</button>
-    <button type="button" name="button" class="key window-key">window</button>
-    <button type="button" name="button" class="key" id="space-key">space</button>
-    <button type="button" name="button" class="key window-key">5</button>
-    <button type="button" name="button" class="key alt-key">6</button>
-    <button type="button" name="button" class="key control-key">7</button>
+    <button type='button' name='button' class='key' id='fn-key'>fn</button>
+    <button type='button' name='button' class='key control-key'>ctrl</button>
+    <button type='button' name='button' class='key alt-key'>alt</button>
+    <button type='button' name='button' class='key window-key'>window</button>
+    <button type='button' name='button' class='key' id='space-key'>space</button>
+    <button type='button' name='button' class='key window-key'>5</button>
+    <button type='button' name='button' class='key alt-key'>6</button>
+    <button type='button' name='button' class='key control-key'>7</button>
     <br>
+     -->
     {% endif %}
   </body>
 </html>

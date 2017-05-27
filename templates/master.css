@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+#main-header {
+  margin: 15px 0;
+  padding: 0 15%;
+  height: 50px;
+}
+
+#logo {
+  display: inline-block;
+  width: 74px;
+  height: 27px;
+  background: url(http://dicimg.naver.com/endic/img/sp_dic_en_chg.png) 0 6px no-repeat
+}
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+
+.list-style-none {
+  list-style: none;
+}
+
+.list-style-none * {
+  display: inline-block;
+}

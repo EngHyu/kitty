@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Input</title>
+    <link rel="stylesheet" href="/static/input.css">
+  </head>
+
+  <body>
+    <form action="/send/" method="post">
+      <fieldset>
+        <legend>input</legend>
+        <textarea name="message" rows="8" cols="80"></textarea>
+        <button type="submit" name="button">전송</button>
+
+        <!-- XXX: CONFIG -->
+        <select class="" name="device">
+          <optgroup label="Device">
+            <option value="1">Device-1</option>
+            <option value="2">Device-2</option>
+          </optgroup>
+        </select>
+
+        <select class="" name="keyboard">
+          <optgroup label="Keyboard">
+            <option value="1">Keyboard-1</option>
+            <option value="2">Keyboard-2</option>
+          </optgroup>
+        </select>
+
+        <select class="" name="language">
+          <optgroup label="Language">
+            <option value="1">English</option>
+            <option value="2">한글</option>
+          </optgroup>
+        </select>
+
+        <select class="" name="arrange">
+          <optgroup label="Arrange">
+            <option value="1">Qwerty</option>
+            <option value="2">두벌식</option>
+          </optgroup>
+        </select>
+      </fieldset>
+    </form>
+
+    {% for message in messages[::-1] %}
+    <form class="messages" action="/send/delete/" method="post">
+      <input type="hidden" name="id" value="{{ message[0] }}">
+      <textarea name="text">{{ message }}</textarea>
+      <button type="submit">x</button>
+    </form>
+    <br>
+    {% endfor %}
+  </body>
+</html>

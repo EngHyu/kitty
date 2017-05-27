@@ -1,20 +1,22 @@
 # coding=utf-8
 from cv2 import *
 import numpy as np
+import os
 class Keyboard:
-    def __init__(self, src, dst):
-        img_o = imread(src)
-        img_o = self.detectMarker(img_o)
-        img_o = self.detectRect(img_o)
+    def __init__(self, user_id, keyboard_id, src, dst='./temp.jpg'):
+        img_o    = imread(src)
+        img_o    = self.detectMarker(img_o)
+
+        rects_2d = self.detectRect(img_o)
+        self.get_output(rects_2d, user_id, keyboard_id)
+        #imwrite(dst, img_o)
         #self.show(img_m)
         #self.show(img_o)
-        imwrite(dst, img_o)
-
 
 
     def detectMarker(self, img):
         img, corners, ids = self.processMarker(img)
-        #img = self.drawMarker(img, corners, ids)
+        img = self.drawMarker(img, corners, ids)
         img = self.resizeMarker(img, corners, ids)
         return img
 
@@ -22,7 +24,7 @@ class Keyboard:
         aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
         parameters =  aruco.DetectorParameters_create()
 
-        corners, ids, rejectedImgPoints = aruco.detectMarkers(img, aruco_dict, parameters=parameters)
+        corners, ids, _ = aruco.detectMarkers(img, aruco_dict, parameters=parameters)
         return img, corners, ids
 
     def drawMarker(self, img, corners, ids):
@@ -53,22 +55,17 @@ class Keyboard:
         return img
 
 
-
     def detectRect(self, img):
-        img = self.get_image(img)
-
+        img         = self.get_processed_image(img)
         bound_rects = self.get_bound_rects(img)
         rects_1d    = self.get_rects_1d(bound_rects)
         rects_2d    = self.get_rects_2d(rects_1d)
 
-        self.get_output(rects_2d)
+        return rects_2d
 
-        return img
-
-    def get_image(self, img):
+    def get_processed_image(self, img):
         img = cvtColor(img, COLOR_BGR2GRAY)
         img = Canny(img, 100, 300, 3)
-
         return img
 
     def get_bound_rects(self, img):
@@ -143,9 +140,14 @@ class Keyboard:
 
         return rects_2d
 
-    def get_output(self, rects):
+
+    def get_output(self, rects, user_id='./sqlite3/220102/', keyboard_id=1):
+        if not os.path.exists(user_id):
+            os.mkdir(user_id)
+
         import json
-        with open('layout.json', 'w') as output:
+        path = os.path.join(user_id, str(keyboard_id) + '.json')
+        with open(path, 'w') as output:
             json.dump(rects, output)
 
     def drawRect(self, img, rects):
@@ -159,5 +161,6 @@ class Keyboard:
         imshow("Image", img)
         waitKey(0)
 
+
 if __name__ == "__main__":
-    keyboard = Keyboard("/Users/roomedia/Desktop/9.png", "/Users/roomedia/Desktop/develop/df/10.png")
+    keyboard = Keyboard("./9.png", "../10.png")
